@@ -8,13 +8,15 @@ stay in the water too long. There is a shark.
 The web client is plain JavaScript and raw WebGL2, with no libraries and no
 build step. A small Python (Flask) backend generates the world.
 
+[Live DEMO](https://mykkro.eu.pythonanywhere.com/)
+
 ![Choosing an avatar](media/start-screen.png)
 
-| | |
-|---|---|
-| ![The island from the sea](media/island.png) | ![A tabby cat exploring the forest](media/cat-exploring.png) |
+|                                                             |                                                              |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| ![The island from the sea](media/island.png)                | ![A tabby cat exploring the forest](media/cat-exploring.png) |
 | ![The gorilla shares some forest wisdom](media/gorilla.png) | ![A dolphin jumps next to a swimming dog](media/dolphin.png) |
-| ![Sunset on the beach](media/sunset.png) | ![A shark fin circling the ball](media/shark.png) |
+| ![Sunset on the beach](media/sunset.png)                    | ![A shark fin circling the ball](media/shark.png)            |
 
 ## Features
 
@@ -49,13 +51,13 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Then open <http://127.0.0.1:5000>.
+Then open [http://127.0.0.1:5000](http://127.0.0.1:5000).
 
 URL options:
 
-| Option | Example | Effect |
-|---|---|---|
-| `seed` | `?seed=42` | a different island |
+| Option   | Example      | Effect                                              |
+| -------- | ------------ | --------------------------------------------------- |
+| `seed` | `?seed=42` | a different island                                  |
 | `time` | `?time=21` | start at 21:00 (the day starts at 08:00 by default) |
 
 ### With gunicorn (production)
@@ -73,11 +75,11 @@ listens on `0.0.0.0:$PORT`, falling back to port 8000, and runs 2 workers with 4
 threads each. It also builds the default island once at startup so the first
 visitor doesn't wait for it. Environment variables override these settings:
 
-| Variable | Default | Meaning |
-|---|---|---|
-| `PORT` | `8000` | port to listen on (set automatically on Render) |
-| `WEB_CONCURRENCY` | `2` | worker processes |
-| `GUNICORN_THREADS` | `4` | threads per worker |
+| Variable             | Default  | Meaning                                         |
+| -------------------- | -------- | ----------------------------------------------- |
+| `PORT`             | `8000` | port to listen on (set automatically on Render) |
+| `WEB_CONCURRENCY`  | `2`    | worker processes                                |
+| `GUNICORN_THREADS` | `4`    | threads per worker                              |
 
 ## Deploying to Render
 
@@ -92,12 +94,12 @@ Python web service.
 
 To set it up by hand instead, choose **New > Web Service** with:
 
-| Setting | Value |
-|---|---|
-| Runtime | Python |
-| Build command | `pip install -r requirements.txt` |
-| Start command | `gunicorn app:app` |
-| Health check path | `/api/health` |
+| Setting           | Value                               |
+| ----------------- | ----------------------------------- |
+| Runtime           | Python                              |
+| Build command     | `pip install -r requirements.txt` |
+| Start command     | `gunicorn app:app`                |
+| Health check path | `/api/health`                     |
 
 Render uses the Python version in [.python-version](.python-version) (3.13).
 Every push to the connected branch deploys again.
@@ -107,14 +109,14 @@ and the next visit takes up to a minute to wake it up.
 
 ## Controls
 
-| Action | Keyboard and mouse | Touch |
-|---|---|---|
-| Move | W A S D | joystick under your left thumb |
-| Look around | arrow keys, or click to capture the mouse | drag with your right thumb |
-| Zoom | mouse wheel | pinch |
-| Give the gorilla an egg | E | 🥚 button (appears near her) |
-| Fast-forward time | hold T | hold ⏩ |
-| Release the mouse | Esc | |
+| Action                  | Keyboard and mouse                        | Touch                          |
+| ----------------------- | ----------------------------------------- | ------------------------------ |
+| Move                    | W A S D                                   | joystick under your left thumb |
+| Look around             | arrow keys, or click to capture the mouse | drag with your right thumb     |
+| Zoom                    | mouse wheel                               | pinch                          |
+| Give the gorilla an egg | E                                         | 🥚 button (appears near her)   |
+| Fast-forward time       | hold T                                    | hold ⏩                        |
+| Release the mouse       | Esc                                       |                                |
 
 A full day lasts 5 minutes. You can float for about 35 seconds before the
 shark comes, and time on land lets you recover.
