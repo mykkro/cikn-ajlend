@@ -1,0 +1,450 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #111;
+  overflow: hidden;
+}
+
+#game {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#hud {
+  position: fixed;
+  bottom: 8px;
+  left: 8px;
+  font: 12px monospace;
+  color: #fff;
+  text-shadow: 0 1px 2px #000;
+}
+
+#score {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 24px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: rgba(20, 30, 20, 0.55);
+  color: #fff;
+  font: 600 20px system-ui, sans-serif;
+  text-shadow: 0 1px 2px #000;
+  user-select: none;
+  pointer-events: none;
+}
+
+#score b {
+  display: inline-block;
+  min-width: 2ch;
+  font-variant-numeric: tabular-nums;
+}
+
+#score.bump {
+  animation: bump 0.3s ease-out;
+}
+
+@keyframes bump {
+  40% { transform: translateX(-50%) scale(1.18); background: rgba(210, 160, 40, 0.75); }
+}
+
+#speech {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  max-width: 260px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 252, 240, 0.95);
+  color: #2b2418;
+  font: italic 15px Georgia, serif;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+#speech::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-bottom: 0;
+  border-top-color: rgba(255, 252, 240, 0.95);
+}
+
+#prompt {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: rgba(20, 30, 20, 0.6);
+  color: #fff;
+  font: 15px system-ui, sans-serif;
+  pointer-events: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+#lang {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(20, 30, 20, 0.55);
+}
+
+#lang button {
+  display: block;
+  width: 36px;
+  height: 26px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  overflow: hidden;
+  background: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+
+#lang button svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#lang button:hover,
+#lang button:focus-visible {
+  opacity: 0.85;
+}
+
+#lang button[aria-pressed="true"] {
+  opacity: 1;
+  border-color: #fff;
+}
+
+/* ---- Touch controls ---- */
+
+html, body, #game {
+  touch-action: none;           /* no browser pan/zoom gestures over the game */
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#stick {
+  position: fixed;
+  width: 112px;
+  height: 112px;
+  margin: -56px 0 0 -56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+
+#stick .knob {
+  position: absolute;
+  left: 32px;
+  top: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.touch-button {
+  position: fixed;
+  display: none;
+  width: 64px;
+  height: 64px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  background: rgba(20, 30, 20, 0.55);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  touch-action: manipulation;
+}
+
+body.touch .touch-button {
+  display: block;
+}
+
+#give-button {
+  right: calc(20px + env(safe-area-inset-right));
+  bottom: calc(110px + env(safe-area-inset-bottom));
+  width: 76px;
+  height: 76px;
+  font-size: 34px;
+  background: rgba(210, 160, 40, 0.8);
+}
+
+#time-button {
+  right: calc(20px + env(safe-area-inset-right));
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  width: 52px;
+  height: 52px;
+  font-size: 22px;
+}
+
+#time-button.active {
+  background: rgba(210, 160, 40, 0.8);
+}
+
+body.touch #prompt {
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  max-width: calc(100vw - 180px);
+  text-align: center;
+}
+
+body.touch #hud {
+  bottom: auto;
+  top: calc(64px + env(safe-area-inset-top));
+  left: calc(12px + env(safe-area-inset-left));
+  max-width: 60vw;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(20, 30, 20, 0.55);
+  animation: fade-help 10s forwards;
+}
+
+@keyframes fade-help {
+  80% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+#score {
+  top: calc(12px + env(safe-area-inset-top));
+}
+
+#lang {
+  top: calc(12px + env(safe-area-inset-top));
+  right: calc(12px + env(safe-area-inset-right));
+}
+
+/* Narrow (portrait phone) screens: score on the left, flags on the right. */
+@media (max-width: 560px) {
+  #score {
+    left: calc(10px + env(safe-area-inset-left));
+    transform: none;
+    gap: 12px;
+    padding: 5px 12px;
+    font-size: 16px;
+  }
+  @keyframes bump {
+    40% { transform: scale(1.12); background: rgba(210, 160, 40, 0.75); }
+  }
+  #lang button {
+    width: 30px;
+    height: 22px;
+  }
+  #speech {
+    max-width: 200px;
+    font-size: 14px;
+  }
+}
+
+/* ---- Shark danger and game over ---- */
+
+#danger {
+  position: fixed;
+  top: calc(64px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(150, 20, 20, 0.85);
+  color: #fff;
+  font: 600 17px system-ui, sans-serif;
+  text-align: center;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+  animation: danger-pulse 1s ease-in-out infinite;
+}
+
+body.danger::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 120px rgba(200, 0, 0, 0.55);
+  animation: danger-pulse 1s ease-in-out infinite;
+}
+
+@keyframes danger-pulse {
+  50% { opacity: 0.55; }
+}
+
+#game-over {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(10, 20, 40, 0.6);
+  animation: fade-in 0.6s ease-out;
+}
+
+#game-over .panel {
+  max-width: 420px;
+  padding: 24px 28px;
+  border-radius: 16px;
+  background: rgba(255, 252, 245, 0.97);
+  color: #2b2418;
+  font: 16px system-ui, sans-serif;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+#game-over h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  color: #a01818;
+}
+
+#game-over .stats {
+  font-weight: 600;
+}
+
+#game-over button {
+  margin-top: 8px;
+  padding: 12px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #d9a02a;
+  color: #fff;
+  font: 600 18px system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#game-over button:focus-visible {
+  outline: 3px solid #2b2418;
+  outline-offset: 2px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+/* ---- Start screen: avatar choice ---- */
+
+#start {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(10, 30, 40, 0.45);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  z-index: 5;
+}
+
+#lang {
+  z-index: 10; /* the language can be switched on the start screen too */
+}
+
+#start .panel {
+  max-width: 760px;
+  padding: 20px 24px;
+  border-radius: 18px;
+  background: rgba(255, 252, 245, 0.95);
+  color: #2b2418;
+  text-align: center;
+  font: 16px system-ui, sans-serif;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+#start h1 {
+  margin: 0 0 14px;
+  font-size: 28px;
+}
+
+#start .cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+#start .card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 8px 10px;
+  border: 3px solid transparent;
+  border-radius: 14px;
+  background: linear-gradient(#bfe3f5, #e9f6e3);
+  color: inherit;
+  font: 600 16px system-ui, sans-serif;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.12s;
+  touch-action: manipulation;
+}
+
+#start .card:hover,
+#start .card:focus-visible {
+  transform: translateY(-3px);
+  border-color: #d9a02a;
+  outline: none;
+}
+
+#start .card canvas {
+  width: 140px;
+  height: 140px;
+  max-width: 100%;
+  aspect-ratio: 1;
+}
+
+#start .card .key {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+body.touch #start .card .key {
+  display: none;
+}
+
+#start .note {
+  margin: 14px 0 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+@media (max-width: 640px), (max-height: 420px) {
+  #start .panel {
+    padding: 14px;
+  }
+  #start h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  #start .card canvas {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+@media (max-width: 480px) {
+  #start .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
