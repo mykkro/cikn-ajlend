@@ -1,3 +1,5 @@
+import gzip
+import json
 import unittest
 
 from app import app
@@ -39,6 +41,15 @@ class TerrainApiTest(unittest.TestCase):
         data = self.client.get("/api/terrain?seed=2&tiles=2&segments=4").get_json()
         self.assertEqual((data["seed"], data["tiles"], data["segments"]), (2, 2, 4))
         self.assertEqual(len(data["heights"]), 9 * 9)
+
+    def test_gzips_when_the_client_accepts_it(self):
+        plain = self.client.get("/api/terrain?seed=2&tiles=2&segments=4")
+        packed = self.client.get("/api/terrain?seed=2&tiles=2&segments=4", headers={"Accept-Encoding": "gzip, br"})
+        self.assertNotIn("Content-Encoding", plain.headers)
+        self.assertEqual(packed.headers["Content-Encoding"], "gzip")
+        self.assertEqual(packed.headers["Vary"], "Accept-Encoding")
+        self.assertEqual(json.loads(gzip.decompress(packed.data)), plain.get_json())
+        self.assertLess(len(packed.data), len(plain.data))
 
     def test_rejects_bad_params(self):
         self.assertEqual(self.client.get("/api/terrain?tiles=abc").status_code, 400)

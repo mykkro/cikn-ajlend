@@ -58,6 +58,53 @@ URL options:
 | `seed` | `?seed=42` | a different island |
 | `time` | `?time=21` | start at 21:00 (the day starts at 08:00 by default) |
 
+### With gunicorn (production)
+
+`python app.py` runs Flask's development server. For a real deployment, use
+gunicorn, which runs on Linux and macOS but not on native Windows (use WSL there):
+
+```sh
+pip install -r requirements.txt
+gunicorn app:app
+```
+
+Gunicorn reads its settings from [gunicorn.conf.py](gunicorn.conf.py). It
+listens on `0.0.0.0:$PORT`, falling back to port 8000, and runs 2 workers with 4
+threads each. It also builds the default island once at startup so the first
+visitor doesn't wait for it. Environment variables override these settings:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `PORT` | `8000` | port to listen on (set automatically on Render) |
+| `WEB_CONCURRENCY` | `2` | worker processes |
+| `GUNICORN_THREADS` | `4` | threads per worker |
+
+## Deploying to Render
+
+The repository includes a [Render Blueprint](render.yaml) that describes a free
+Python web service.
+
+1. Push the repository to GitHub, GitLab or Bitbucket.
+2. In the [Render dashboard](https://dashboard.render.com), choose
+   **New > Blueprint** and select the repository. Render reads `render.yaml`
+   and creates the `chicken-island` service.
+3. Wait for the first deploy, then open the `onrender.com` URL Render shows.
+
+To set it up by hand instead, choose **New > Web Service** with:
+
+| Setting | Value |
+|---|---|
+| Runtime | Python |
+| Build command | `pip install -r requirements.txt` |
+| Start command | `gunicorn app:app` |
+| Health check path | `/api/health` |
+
+Render uses the Python version in [.python-version](.python-version) (3.13).
+Every push to the connected branch deploys again.
+
+On the free plan, the service sleeps after about 15 minutes without visitors,
+and the next visit takes up to a minute to wake it up.
+
 ## Controls
 
 | Action | Keyboard and mouse | Touch |
@@ -88,7 +135,9 @@ translations), not the rendering.
 ## How it's organised
 
 ```
-app.py              Flask server: serves the client and /api/terrain (cached per seed)
+app.py              Flask server: serves the client and /api/terrain (cached per seed, gzipped)
+gunicorn.conf.py    production server settings (port, workers, preloading the default island)
+render.yaml         Render Blueprint for deploying the web service
 terrain.py          island heightmap from fractal value noise
 props.py            where trees, rocks, bushes, grass and the gorilla go
 static/index.html   the page and its overlays (start screen, game over, HUD)
