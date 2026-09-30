@@ -370,9 +370,39 @@ body.danger::after {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
-#start h1 {
+#start .logo {
+  margin: -4px auto 6px;
+  max-width: 360px;
+  line-height: 0;
+}
+
+#start .logo svg {
+  width: 100%;
+  height: auto;
+}
+
+.logo-word {
+  font-family: "Fredoka", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 46px;
+  stroke: #3b2a1a;
+  stroke-width: 7px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  letter-spacing: 0.5px;
+}
+
+.logo-chicken {
+  fill: #f39b2f;
+}
+
+.logo-island {
+  fill: #2aa3b8;
+}
+
+#start h2 {
   margin: 0 0 14px;
-  font-size: 28px;
+  font-size: 22px;
 }
 
 #start .cards {
@@ -433,8 +463,11 @@ body.touch #start .card .key {
   #start .panel {
     padding: 14px;
   }
-  #start h1 {
-    font-size: 22px;
+  #start .logo {
+    max-width: 240px;
+  }
+  #start h2 {
+    font-size: 18px;
     margin-bottom: 10px;
   }
   #start .card canvas {

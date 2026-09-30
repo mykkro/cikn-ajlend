@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Morbo</title>
+  <title>Chicken Island</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap">
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -18,7 +22,50 @@
   <div id="danger" role="alert" hidden></div>
   <div id="start" role="dialog" aria-modal="true" aria-labelledby="start-title" hidden>
     <div class="panel">
-      <h1 id="start-title"></h1>
+      <h1 class="logo">
+        <svg viewBox="0 0 312 140" role="img" aria-labelledby="logo-title">
+          <title id="logo-title">Chicken Island</title>
+          <defs>
+            <clipPath id="logo-badge"><circle cx="64" cy="70" r="56"/></clipPath>
+            <linearGradient id="logo-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#8fd3f4"/>
+              <stop offset="1" stop-color="#e3f6fc"/>
+            </linearGradient>
+          </defs>
+          <!-- Badge: a chicken on a little island -->
+          <circle cx="64" cy="70" r="60" fill="#fffaf0"/>
+          <g clip-path="url(#logo-badge)">
+            <rect x="0" y="0" width="140" height="140" fill="url(#logo-sky)"/>
+            <circle cx="100" cy="34" r="11" fill="#ffd66b"/>
+            <path d="M104 22 l2 -6 M112 30 l6 -2 M112 40 l6 2" stroke="#ffd66b" stroke-width="3" stroke-linecap="round"/>
+            <rect x="0" y="94" width="140" height="40" fill="#3aa0c8"/>
+            <path d="M6 108 q7 -5 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0" fill="none" stroke="#bfe8f5" stroke-width="3" stroke-linecap="round"/>
+            <path d="M16 119 q7 -5 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0" fill="none" stroke="#bfe8f5" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+            <ellipse cx="64" cy="94" rx="46" ry="9" fill="#f3dca0"/>
+            <path d="M26 94 Q42 64 66 68 Q90 64 104 94 Z" fill="#6cc04a"/>
+            <rect x="33" y="62" width="5" height="24" rx="2.5" fill="#8a5a33"/>
+            <circle cx="35.5" cy="58" r="11" fill="#3f9a3a"/>
+            <circle cx="30" cy="62" r="7" fill="#4fae44"/>
+            <ellipse cx="47" cy="86" rx="5" ry="6.5" fill="#fff4dc" stroke="#3b2a1a" stroke-width="1.8"/>
+            <path d="M53 66 q-9 -8 -4 -16 q4 7 10 9 z" fill="#fff" stroke="#3b2a1a" stroke-width="2.2" stroke-linejoin="round"/>
+            <ellipse cx="68" cy="72" rx="17" ry="13" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+            <path d="M60 71 q9 -7 17 2 q-9 6 -17 -2 z" fill="#f1eadb" stroke="#3b2a1a" stroke-width="1.8"/>
+            <circle cx="81" cy="57" r="9.5" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+            <path d="M76 49 q0 -7 5 -4 q2 -6 6 -1 q5 -2 3 5 z" fill="#e5383b" stroke="#3b2a1a" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M89.5 55 l8 2.5 l-8 3 z" fill="#f7a72b" stroke="#3b2a1a" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M88 61 q1.5 5 -1.5 6 q-2.5 -3 -0.5 -6 z" fill="#e5383b"/>
+            <circle cx="83" cy="55" r="2" fill="#3b2a1a"/>
+            <circle cx="83.7" cy="54.3" r="0.6" fill="#fff"/>
+            <circle cx="85" cy="60.5" r="2.2" fill="#ffb3a7"/>
+            <path d="M64 85 v5 m-3 0 h6 M72 85 v5 m-3 0 h6" stroke="#f7a72b" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <circle cx="64" cy="70" r="56" fill="none" stroke="#3b2a1a" stroke-width="4"/>
+          <!-- Wordmark -->
+          <text x="134" y="66" class="logo-word logo-chicken">Chicken</text>
+          <text x="150" y="114" class="logo-word logo-island">Island</text>
+        </svg>
+      </h1>
+      <h2 id="start-title"></h2>
       <div class="cards"></div>
       <p class="note"></p>
     </div>

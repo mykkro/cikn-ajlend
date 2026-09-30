@@ -1,4 +1,4 @@
-"""Morbo game server: serves the web client and a small JSON API."""
+"""Chicken Island game server: serves the web client and a small JSON API."""
 
 from functools import lru_cache
 from pathlib import Path

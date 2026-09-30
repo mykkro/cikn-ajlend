@@ -132,7 +132,7 @@ export const STRINGS = {
   },
 };
 
-const STORAGE_KEY = "morbo.language";
+const STORAGE_KEY = "chicken-island.language";
 const listeners = new Set();
 let current = detectLanguage();
 

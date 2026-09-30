@@ -300,7 +300,7 @@ function applyStaticText() {
   if (!window.__game) hud.textContent = t("loading");
 }
 
-const AVATAR_KEY = "morbo.avatar";
+const AVATAR_KEY = "chicken-island.avatar";
 
 // Builds the avatar cards with live previews; `onChoose(id)` starts the game.
 function createStartScreen(gl, lit, meshes, onChoose) {
@@ -335,7 +335,7 @@ function createStartScreen(gl, lit, meshes, onChoose) {
   };
   window.addEventListener("keydown", numberKeys);
   const label = () => {
-    startScreen.querySelector("h1").textContent = t("chooseTitle");
+    startScreen.querySelector("h2").textContent = t("chooseTitle");
     startScreen.querySelector(".note").textContent = t("chooseNote");
     for (const card of cards.children) card.querySelector(".name").textContent = t(`avatar_${card.dataset.id}`);
   };

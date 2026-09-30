@@ -1,6 +1,6 @@
-# Morbo
+<h1 align="center"><img src="media/logo.png" alt="Chicken Island" width="420"></h1>
 
-A small, cozy 3D browser game on a procedurally generated island. Pick an
+**Chicken Island** is a small, cozy 3D browser game on a procedurally generated island. Pick an
 avatar, roll or wander among the hills and trees, collect the eggs the chickens
 lay, share them with a wise young gorilla, swim with the dolphins, and don't
 stay in the water too long. There is a shark.

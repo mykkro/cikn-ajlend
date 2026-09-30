@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 10 120 120">
+  <defs>
+    <clipPath id="badge"><circle cx="64" cy="70" r="56"/></clipPath>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fd3f4"/>
+      <stop offset="1" stop-color="#e3f6fc"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="70" r="58" fill="#fffaf0"/>
+  <g clip-path="url(#badge)">
+    <rect x="0" y="0" width="140" height="140" fill="url(#sky)"/>
+    <rect x="0" y="94" width="140" height="40" fill="#3aa0c8"/>
+    <ellipse cx="64" cy="94" rx="46" ry="9" fill="#f3dca0"/>
+    <path d="M26 94 Q42 64 66 68 Q90 64 104 94 Z" fill="#6cc04a"/>
+    <ellipse cx="68" cy="72" rx="17" ry="13" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+    <circle cx="81" cy="57" r="9.5" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+    <path d="M76 49 q0 -7 5 -4 q2 -6 6 -1 q5 -2 3 5 z" fill="#e5383b" stroke="#3b2a1a" stroke-width="2"/>
+    <path d="M89.5 55 l8 2.5 l-8 3 z" fill="#f7a72b" stroke="#3b2a1a" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="83" cy="55" r="2" fill="#3b2a1a"/>
+  </g>
+  <circle cx="64" cy="70" r="56" fill="none" stroke="#3b2a1a" stroke-width="4"/>
+</svg>
