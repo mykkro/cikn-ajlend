@@ -4,8 +4,9 @@
 import { createProgram } from "./gl.js";
 import { SKY_GLSL, SKY_UNIFORMS, setSkyUniforms } from "./skycolor.js";
 import { SEA_LEVEL, WAVES_GLSL } from "./waves.js";
+import { smoothstep01 } from "./world/noise.js";
 
-const HORIZON = 400; // how far the skirt reaches past the map
+const HORIZON = 20000; // how far the skirt reaches past the map: far enough to meet the horizon, even from above
 const DEEP = 10;     // "depth" given to the skirt, beyond the modelled seabed
 
 const VERTEX_SHADER = `#version 300 es
@@ -62,6 +63,7 @@ void main() {
   color = mix(color, vec3(0.93, 0.96, 0.97) * (uAmbientSky + uLightColor * 0.6), clamp(foam, 0.0, 1.0) * 0.7);
 
   float alpha = mix(0.4, 0.88, deep) + fresnel * 0.4 + glint;
+  alpha = mix(alpha, 1.0, smoothstep(4.0, 9.0, vDepth)); // open sea: nothing shows through
   vec3 view = vWorld - uCameraPos;
   vec3 fogColor = skyColor(normalize(vec3(view.x, 0.03 * length(view.xz), view.z)));
   float fog = smoothstep(uFogRange.x, uFogRange.y, length(view));
@@ -86,8 +88,12 @@ export function createWater(gl, terrain) {
       const edge = Math.min(col, row, n - 1 - col, n - 1 - row);
       index[k] = positions.length / 3;
       positions.push(x, SEA_LEVEL, z);
-      // Waves fade out at the map edge so the grid meets the flat skirt without a gap.
-      water.push(Math.max(SEA_LEVEL - terrain.heightAt(x, z), 0), Math.min(edge / 4, 1));
+      // Waves fade out at the map edge so the grid meets the flat skirt without a gap. The open
+      // sea darkens to the skirt's depth in a ring toward the edge, so the map's square never shows.
+      const depth = Math.max(SEA_LEVEL - terrain.heightAt(x, z), 0);
+      const offshore = smoothstep01((Math.hypot(x - size / 2, z - size / 2) / size - 0.38) / 0.12);
+      const open = smoothstep01((depth - 1.5) / 1.3);
+      water.push(depth + (DEEP - depth) * offshore * open, Math.min(edge / 4, 1));
     }
     return index[k];
   };
@@ -113,16 +119,17 @@ export function createWater(gl, terrain) {
   }
 
   const vao = gl.createVertexArray();
+  const buffers = [gl.createBuffer(), gl.createBuffer(), gl.createBuffer()];
   gl.bindVertexArray(vao);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[0]);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(0);
   gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[1]);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(water), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(1);
   gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[2]);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
   gl.bindVertexArray(null);
   const count = indices.length;
@@ -147,6 +154,12 @@ export function createWater(gl, terrain) {
       gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_INT, 0);
       gl.depthMask(true);
       gl.disable(gl.BLEND);
+    },
+
+    dispose() {
+      gl.deleteVertexArray(vao);
+      for (const buffer of buffers) gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
     },
   };
 }

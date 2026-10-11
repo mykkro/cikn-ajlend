@@ -2,7 +2,7 @@
 
 import * as mat4 from "./mat4.js";
 
-export function createShadowMap(gl, size = 2048, halfExtent = 22) {
+export function createShadowMap(gl, size = 2048) {
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texStorage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT24, size, size);
@@ -22,22 +22,22 @@ export function createShadowMap(gl, size = 2048, halfExtent = 22) {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   if (status !== gl.FRAMEBUFFER_COMPLETE) throw new Error(`shadow framebuffer incomplete: ${status}`);
 
-  const texel = (2 * halfExtent) / size;
-
   return {
     texture,
     texelSize: 1 / size,
 
-    // Light-space view-projection centred on `focus`. The centre is snapped to
-    // whole shadow-map texels so shadows don't shimmer as the player moves.
-    matrixFor(lightDir, focus) {
+    // Light-space view-projection for a square of 2 * halfExtent around `focus`. The centre
+    // is snapped to whole shadow-map texels so shadows don't shimmer as the player moves.
+    matrixFor(lightDir, focus, halfExtent = 22) {
+      const texel = (2 * halfExtent) / size;
+      const reach = Math.max(80, halfExtent * 1.5); // depth range along the light
       const up = Math.abs(lightDir[1]) > 0.99 ? [0, 0, 1] : [0, 1, 0];
       const view = mat4.lookAt(lightDir.map((v) => v * 100), [0, 0, 0], up);
       const c = mat4.transformPoint(view, focus);
       const cx = Math.round(c[0] / texel) * texel;
       const cy = Math.round(c[1] / texel) * texel;
       const depth = -c[2];
-      const projection = mat4.ortho(cx - halfExtent, cx + halfExtent, cy - halfExtent, cy + halfExtent, depth - 80, depth + 80);
+      const projection = mat4.ortho(cx - halfExtent, cx + halfExtent, cy - halfExtent, cy + halfExtent, depth - reach, depth + reach);
       return mat4.multiply(projection, view);
     },
 

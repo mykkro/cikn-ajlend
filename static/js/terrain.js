@@ -1,30 +1,13 @@
-// Turns the server heightmap into a mesh and answers height queries.
+// Turns a height field into a mesh, coloured by the world's climate.
 
-const GRASS = [0.36, 0.62, 0.27];
-const MEADOW = [0.55, 0.62, 0.30];
-const ROCK = [0.52, 0.47, 0.42];
-const SAND = [0.87, 0.8, 0.6];
-const WET_SAND = [0.66, 0.6, 0.45];
-const SEABED = [0.42, 0.45, 0.38];
+import { SEA_LEVEL } from "./world/heightmap.js";
+import { valueNoise } from "./world/noise.js";
 
-export async function loadTerrain(seed) {
-  const response = await fetch(`/api/terrain?seed=${seed}`);
-  if (!response.ok) throw new Error(`terrain request failed: ${response.status}`);
-  return createTerrain(await response.json());
-}
-
-export function createTerrain(data) {
-  const n = data.tiles * data.segments + 1;
-  const cell = data.tileSize / data.segments;
-  const size = data.tiles * data.tileSize;
-  const heights = data.heights;
-  const maxHeight = Math.max(...heights) || 1;
-
-  const h = (col, row) => {
-    col = Math.min(Math.max(col, 0), n - 1);
-    row = Math.min(Math.max(row, 0), n - 1);
-    return heights[row * n + col];
-  };
+// field: from createHeightField(); climate: an entry of CLIMATES.
+export function buildTerrainGeometry(field, climate) {
+  const n = field.verticesPerSide;
+  const { cell, maxHeight, grid: h } = field;
+  const c = climate.ground;
 
   const positions = new Float32Array(n * n * 3);
   const normals = new Float32Array(n * n * 3);
@@ -42,12 +25,18 @@ export function createTerrain(data) {
       normals.set([nx / len, ny / len, nz / len], i);
 
       const steepness = 1 - ny / len;
-      let color = mix(GRASS, MEADOW, smoothstep(0.35, 0.8, y / maxHeight));
-      color = mix(color, ROCK, smoothstep(0.25, 0.45, steepness));
+      let color = mix(c.grass, c.meadow, smoothstep(0.35, 0.8, y / maxHeight));
+      color = mix(color, c.rock, smoothstep(0.25, 0.45, steepness));
+      if (climate.snowLine !== null) {
+        // A ragged snow line that does not stick to steep rock.
+        const line = climate.snowLine + (valueNoise(col * 0.15, row * 0.15, 77) - 0.5) * 1.2;
+        const snow = smoothstep(line - 0.3, line + 0.3, y) * (1 - smoothstep(0.4, 0.6, steepness));
+        color = mix(color, climate.snow, snow);
+      }
       // Beach sand near the waterline, darker and wet below it, then seabed.
-      color = mix(SAND, color, smoothstep(0.55, 0.9, y));
-      color = mix(WET_SAND, color, smoothstep(-0.15, 0.1, y));
-      color = mix(SEABED, color, smoothstep(-2.2, -0.8, y));
+      color = mix(c.sand, color, smoothstep(SEA_LEVEL + 0.55, SEA_LEVEL + 0.9, y));
+      color = mix(c.wetSand, color, smoothstep(SEA_LEVEL - 0.15, SEA_LEVEL + 0.1, y));
+      color = mix(c.seabed, color, smoothstep(SEA_LEVEL - 2.2, SEA_LEVEL - 0.8, y));
       colors.set(color, i);
     }
   }
@@ -57,31 +46,12 @@ export function createTerrain(data) {
   let k = 0;
   for (let row = 0; row < cells; row++) {
     for (let col = 0; col < cells; col++) {
-      const a = row * n + col, b = a + 1, c = a + n, d = c + 1;
-      indices.set([a, c, b, b, c, d], k);
+      const a = row * n + col, b = a + 1, d = a + n, e = d + 1;
+      indices.set([a, d, b, b, d, e], k);
       k += 6;
     }
   }
-
-  // Bilinear interpolation of the heightmap at world position (x, z).
-  function heightAt(x, z) {
-    const gx = Math.min(Math.max(x / cell, 0), cells);
-    const gz = Math.min(Math.max(z / cell, 0), cells);
-    const col = Math.min(Math.floor(gx), cells - 1);
-    const row = Math.min(Math.floor(gz), cells - 1);
-    const fx = gx - col, fz = gz - row;
-    const near = h(col, row) + (h(col + 1, row) - h(col, row)) * fx;
-    const far = h(col, row + 1) + (h(col + 1, row + 1) - h(col, row + 1)) * fx;
-    return near + (far - near) * fz;
-  }
-
-  return {
-    size,
-    tileSize: data.tileSize,
-    props: data.props,
-    geometry: { positions, normals, colors, indices },
-    heightAt,
-  };
+  return { positions, normals, colors, indices };
 }
 
 function mix(a, b, t) {
