@@ -63,7 +63,7 @@ export function createChickenMeshes(gl) {
 export function spawnChickens(count, random, terrain, avoid, obstacles, clearance = 3) {
   const chickens = [];
   const margin = EDGE_MARGIN;
-  for (let tries = 0; chickens.length < count && tries < 5000; tries++) {
+  while (chickens.length < count) {
     const x = random.range(margin, terrain.size - margin);
     const z = random.range(margin, terrain.size - margin);
     if (Math.hypot(x - avoid.x, z - avoid.z) < clearance) continue;
@@ -148,8 +148,9 @@ export function keepOnLand(chicken, terrain) {
 export function drawChicken(gl, uniforms, meshes, chicken, terrain) {
   const stride = Math.min(chicken.speed / WALK_SPEED, 1);
   const bob = Math.abs(Math.sin(chicken.phase)) * 0.03 * stride * chicken.scale;
+  const squat = Math.sin((chicken.laying ?? 0) * Math.PI) * 0.1 * chicken.scale; // while laying an egg
   const base = chain(
-    mat4.translation(chicken.x, terrain.heightAt(chicken.x, chicken.z) + bob, chicken.z),
+    mat4.translation(chicken.x, terrain.heightAt(chicken.x, chicken.z) + bob - squat, chicken.z),
     mat4.rotationAxis(Y_AXIS, chicken.heading),
     mat4.scaling(chicken.scale),
   );

@@ -1,6 +1,5 @@
 // On-screen touch controls: a floating joystick on the left half, drag-to-look
-// and pinch-to-zoom on the right half, plus a button. They feed the shared input.
-// While `ui.stickEnabled()` is false (the editor overview), every drag looks around.
+// and pinch-to-zoom on the right half, plus buttons. They feed the shared input.
 
 import { stickVector } from "./input.js";
 
@@ -38,7 +37,7 @@ export function createTouchControls(canvas, input, ui, onEnable) {
     if (e.pointerType !== "touch") return;
     enable();
     canvas.setPointerCapture(e.pointerId);
-    if (stickId === null && ui.stickEnabled() && e.clientX < window.innerWidth * STICK_AREA) {
+    if (stickId === null && e.clientX < window.innerWidth * STICK_AREA) {
       stickId = e.pointerId;
       stickOrigin = { x: e.clientX, y: e.clientY };
       showStick(e.clientX, e.clientY, 0, 0);
@@ -88,7 +87,11 @@ export function createTouchControls(canvas, input, ui, onEnable) {
   canvas.addEventListener("pointerup", release);
   canvas.addEventListener("pointercancel", release);
 
-  // Hold button -> key held while touched.
+  // Tap button -> one key press; hold button -> key held while touched.
+  ui.give.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    input.press("KeyE");
+  });
   const holdTime = (held) => (e) => {
     e.preventDefault();
     input.hold("KeyT", held);

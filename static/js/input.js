@@ -3,9 +3,7 @@
 
 const CAPTURED_KEYS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
 
-// `capturesMouse()` decides whether a click captures the pointer for mouse look (when
-// walking around) or the mouse just drags the view (in the editor overview).
-export function createInput(canvas, { capturesMouse = () => true } = {}) {
+export function createInput(canvas) {
   const down = new Set();     // physical keys held
   const virtual = new Set();  // on-screen buttons held (same key codes)
   const pressed = new Set();  // keys pressed since last checked
@@ -15,7 +13,6 @@ export function createInput(canvas, { capturesMouse = () => true } = {}) {
   let stick = { x: 0, y: 0 }; // touch joystick, -1..1 (y up = forward)
 
   window.addEventListener("keydown", (e) => {
-    if (e.target.closest?.("input, select, textarea")) return; // typing in a form, not playing
     down.add(e.code);
     if (!e.repeat) pressed.add(e.code);
     if (CAPTURED_KEYS.has(e.code)) e.preventDefault();
@@ -26,16 +23,12 @@ export function createInput(canvas, { capturesMouse = () => true } = {}) {
     virtual.clear();
   });
 
-  // Mouse: click captures the pointer for mouse look, or drag to look (touch taps must not try this).
-  let dragging = false;
+  // Mouse: click captures the pointer for mouse look (touch taps must not try this).
   canvas.addEventListener("pointerdown", (e) => {
-    if (e.pointerType !== "mouse") return;
-    if (capturesMouse()) canvas.requestPointerLock?.();
-    else dragging = true;
+    if (e.pointerType === "mouse") canvas.requestPointerLock?.();
   });
-  window.addEventListener("pointerup", () => { dragging = false; });
   document.addEventListener("mousemove", (e) => {
-    if (document.pointerLockElement !== canvas && !(dragging && e.buttons)) return;
+    if (document.pointerLockElement !== canvas) return;
     lookX += e.movementX;
     lookY += e.movementY;
   });

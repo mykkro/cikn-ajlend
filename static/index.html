@@ -3,21 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>CityMaker</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>Chicken Island</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-  <canvas id="game" tabindex="-1"></canvas>
-
-  <aside id="editor" aria-labelledby="editor-title">
-    <div class="editor-head">
+  <canvas id="game"></canvas>
+  <div id="score" aria-live="polite">
+    <span title="Eggs in basket">🥚 <b id="egg-count">0</b></span>
+    <span title="Score">★ <b id="points">0</b></span>
+    <span title="Time of day" id="clock">☀ 08:00</span>
+  </div>
+  <div id="lang" role="group"></div>
+  <div id="speech" hidden></div>
+  <div id="danger" role="alert" hidden></div>
+  <div id="start" role="dialog" aria-modal="true" aria-labelledby="start-title" hidden>
+    <div class="panel">
       <h1 class="logo">
         <svg viewBox="0 0 312 140" role="img" aria-labelledby="logo-title">
-          <title id="logo-title">CityMaker</title>
+          <title id="logo-title">Chicken Island</title>
           <defs>
             <clipPath id="logo-badge"><circle cx="64" cy="70" r="56"/></clipPath>
             <linearGradient id="logo-sky" x1="0" y1="0" x2="0" y2="1">
@@ -25,153 +32,57 @@
               <stop offset="1" stop-color="#e3f6fc"/>
             </linearGradient>
           </defs>
-          <!-- Badge: a little town on an island -->
+          <!-- Badge: a chicken on a little island -->
           <circle cx="64" cy="70" r="60" fill="#fffaf0"/>
-          <g clip-path="url(#logo-badge)" stroke="#3b2a1a" stroke-linejoin="round">
-            <rect x="0" y="0" width="140" height="140" fill="url(#logo-sky)" stroke="none"/>
-            <circle cx="98" cy="32" r="10" fill="#ffd66b" stroke="none"/>
-            <rect x="0" y="96" width="140" height="40" fill="#3aa0c8" stroke="none"/>
-            <path d="M6 110 q7 -5 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0" fill="none" stroke="#bfe8f5" stroke-width="3" stroke-linecap="round"/>
-            <ellipse cx="64" cy="96" rx="48" ry="9" fill="#f3dca0" stroke="none"/>
-            <path d="M22 96 Q40 70 64 72 Q90 68 106 96 Z" fill="#6cc04a" stroke="none"/>
-            <!-- tree -->
-            <rect x="29" y="74" width="4" height="16" rx="2" fill="#8a5a33" stroke="none"/>
-            <circle cx="31" cy="72" r="8" fill="#3f9a3a" stroke="none"/>
-            <!-- church: tower with a spire, and the nave -->
-            <rect x="55" y="70" width="26" height="18" fill="#fff4dc" stroke-width="2"/>
-            <path d="M53 71 L68 60 L83 71 Z" fill="#c8553d" stroke-width="2"/>
-            <rect x="44" y="52" width="12" height="36" fill="#fff4dc" stroke-width="2"/>
-            <path d="M42 53 L50 30 L58 53 Z" fill="#c8553d" stroke-width="2"/>
-            <path d="M50 30 v-8 m-3 3 h6" stroke-width="2" stroke-linecap="round" fill="none"/>
-            <path d="M47 66 a3 3 0 0 1 6 0 v5 h-6 z" fill="#3b2a1a" stroke="none"/>
-            <rect x="64" y="77" width="6" height="11" fill="#8a5a33" stroke-width="1.5"/>
-            <!-- houses -->
-            <rect x="84" y="78" width="14" height="11" fill="#ffe2a8" stroke-width="2"/>
-            <path d="M82 79 L91 70 L100 79 Z" fill="#e5383b" stroke-width="2"/>
-            <rect x="89" y="82" width="4" height="7" fill="#8a5a33" stroke="none"/>
-            <rect x="34" y="80" width="10" height="9" fill="#ffe2a8" stroke-width="2"/>
-            <path d="M32 81 L39 74 L46 81 Z" fill="#f39b2f" stroke-width="2"/>
+          <g clip-path="url(#logo-badge)">
+            <rect x="0" y="0" width="140" height="140" fill="url(#logo-sky)"/>
+            <circle cx="100" cy="34" r="11" fill="#ffd66b"/>
+            <path d="M104 22 l2 -6 M112 30 l6 -2 M112 40 l6 2" stroke="#ffd66b" stroke-width="3" stroke-linecap="round"/>
+            <rect x="0" y="94" width="140" height="40" fill="#3aa0c8"/>
+            <path d="M6 108 q7 -5 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0" fill="none" stroke="#bfe8f5" stroke-width="3" stroke-linecap="round"/>
+            <path d="M16 119 q7 -5 14 0 t14 0 t14 0 t14 0 t14 0 t14 0 t14 0" fill="none" stroke="#bfe8f5" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+            <ellipse cx="64" cy="94" rx="46" ry="9" fill="#f3dca0"/>
+            <path d="M26 94 Q42 64 66 68 Q90 64 104 94 Z" fill="#6cc04a"/>
+            <rect x="33" y="62" width="5" height="24" rx="2.5" fill="#8a5a33"/>
+            <circle cx="35.5" cy="58" r="11" fill="#3f9a3a"/>
+            <circle cx="30" cy="62" r="7" fill="#4fae44"/>
+            <ellipse cx="47" cy="86" rx="5" ry="6.5" fill="#fff4dc" stroke="#3b2a1a" stroke-width="1.8"/>
+            <path d="M53 66 q-9 -8 -4 -16 q4 7 10 9 z" fill="#fff" stroke="#3b2a1a" stroke-width="2.2" stroke-linejoin="round"/>
+            <ellipse cx="68" cy="72" rx="17" ry="13" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+            <path d="M60 71 q9 -7 17 2 q-9 6 -17 -2 z" fill="#f1eadb" stroke="#3b2a1a" stroke-width="1.8"/>
+            <circle cx="81" cy="57" r="9.5" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+            <path d="M76 49 q0 -7 5 -4 q2 -6 6 -1 q5 -2 3 5 z" fill="#e5383b" stroke="#3b2a1a" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M89.5 55 l8 2.5 l-8 3 z" fill="#f7a72b" stroke="#3b2a1a" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M88 61 q1.5 5 -1.5 6 q-2.5 -3 -0.5 -6 z" fill="#e5383b"/>
+            <circle cx="83" cy="55" r="2" fill="#3b2a1a"/>
+            <circle cx="83.7" cy="54.3" r="0.6" fill="#fff"/>
+            <circle cx="85" cy="60.5" r="2.2" fill="#ffb3a7"/>
+            <path d="M64 85 v5 m-3 0 h6 M72 85 v5 m-3 0 h6" stroke="#f7a72b" stroke-width="2" stroke-linecap="round"/>
           </g>
           <circle cx="64" cy="70" r="56" fill="none" stroke="#3b2a1a" stroke-width="4"/>
           <!-- Wordmark -->
-          <text x="134" y="66" class="logo-word logo-city">City</text>
-          <text x="140" y="114" class="logo-word logo-maker">Maker</text>
+          <text x="134" y="66" class="logo-word logo-chicken">Chicken</text>
+          <text x="150" y="114" class="logo-word logo-island">Island</text>
         </svg>
       </h1>
-      <button type="button" id="hide-panel" class="icon-button" data-t-title="hidePanel">«</button>
-    </div>
-    <h2 id="editor-title" data-t="editorTitle"></h2>
-
-    <form id="options">
-      <div class="field">
-        <label for="opt-seed" data-t="seed"></label>
-        <div class="row">
-          <input id="opt-seed" name="seed" type="number" min="0" max="2147483647" step="1" inputmode="numeric" required>
-          <button type="button" id="random-seed" class="icon-button" data-t-title="randomSeed">🎲</button>
-        </div>
-      </div>
-      <fieldset class="field">
-        <legend data-t="size"></legend>
-        <div class="segmented" id="opt-size"></div>
-      </fieldset>
-      <div class="field">
-        <label for="opt-hilliness" data-t="hilliness"></label>
-        <input id="opt-hilliness" name="hilliness" type="range" min="0" max="100" step="1">
-        <div class="ends"><span data-t="hillinessLow"></span><span data-t="hillinessHigh"></span></div>
-      </div>
-      <div class="field">
-        <label for="opt-peaks" data-t="peaks"></label>
-        <input id="opt-peaks" name="peaks" type="range" min="0" max="100" step="1">
-        <div class="ends"><span data-t="peaksLow"></span><span data-t="peaksHigh"></span></div>
-      </div>
-      <fieldset class="field group">
-        <legend data-t="coast"></legend>
-        <div class="field">
-          <label for="opt-bays" data-t="bays"></label>
-          <input id="opt-bays" name="bays" type="range" min="0" max="100" step="1">
-          <div class="ends"><span data-t="baysLow"></span><span data-t="baysHigh"></span></div>
-        </div>
-        <div class="field">
-          <label for="opt-cliffs" data-t="cliffs"></label>
-          <input id="opt-cliffs" name="cliffs" type="range" min="0" max="100" step="1">
-          <div class="ends"><span data-t="cliffsLow"></span><span data-t="cliffsHigh"></span></div>
-        </div>
-        <div class="field">
-          <label for="opt-islets" data-t="islets"></label>
-          <input id="opt-islets" name="islets" type="range" min="0" max="100" step="1">
-          <div class="ends"><span data-t="isletsLow"></span><span data-t="isletsHigh"></span></div>
-        </div>
-      </fieldset>
-      <div class="field">
-        <label for="opt-vegetation" data-t="vegetation"></label>
-        <input id="opt-vegetation" name="vegetation" type="range" min="0" max="100" step="1">
-        <div class="ends"><span data-t="vegetationLow"></span><span data-t="vegetationHigh"></span></div>
-      </div>
-      <fieldset class="field">
-        <legend data-t="climate"></legend>
-        <div class="climates" id="opt-climate"></div>
-      </fieldset>
-      <fieldset class="field">
-        <legend data-t="settlement"></legend>
-        <div class="segmented five" id="opt-settlement"></div>
-      </fieldset>
-      <fieldset class="field group" id="buildings-group">
-        <legend data-t="buildingsTitle"></legend>
-        <div class="field">
-          <label for="opt-architecture" data-t="architecture"></label>
-          <select id="opt-architecture" name="architecture"></select>
-        </div>
-        <div class="field">
-          <label for="opt-density" data-t="density"></label>
-          <input id="opt-density" name="density" type="range" min="0" max="100" step="1">
-          <div class="ends"><span data-t="densityLow"></span><span data-t="densityHigh"></span></div>
-        </div>
-        <div class="field">
-          <label for="opt-height" data-t="height"></label>
-          <input id="opt-height" name="height" type="range" min="0" max="100" step="1">
-          <div class="ends"><span data-t="heightLow"></span><span data-t="heightHigh"></span></div>
-        </div>
-        <div class="field">
-          <label for="opt-variety" data-t="variety"></label>
-          <input id="opt-variety" name="variety" type="range" min="0" max="100" step="1">
-          <div class="ends"><span data-t="varietyLow"></span><span data-t="varietyHigh"></span></div>
-        </div>
-        <div class="features" id="opt-features"></div>
-      </fieldset>
-      <button type="submit" class="primary" id="generate" data-t="generate"></button>
-    </form>
-
-    <div class="actions">
-      <button type="button" id="explore" class="secondary" data-t="explore"></button>
-      <div class="row">
-        <button type="button" id="export" data-t="exportJson"></button>
-        <button type="button" id="export-glb" data-t="exportGlb" data-t-title="exportGlbTitle"></button>
-      </div>
-      <button type="button" id="import" data-t="importJson"></button>
-      <input id="import-file" type="file" accept=".json,application/json" hidden>
-      <label class="check"><input type="checkbox" id="show-grid" checked> <span data-t="showGrid"></span></label>
-    </div>
-    <p id="stats"></p>
-    <p id="message" role="alert" hidden></p>
-  </aside>
-
-  <button type="button" id="show-panel" class="pill" data-t-title="showPanel" hidden>☰</button>
-  <button type="button" id="back-button" class="pill" data-t-title="backToEditorTitle" hidden>← <span data-t="backToEditor"></span></button>
-  <div id="clock" class="pill" data-t-title="clockTitle">☀ 10:00</div>
-  <div id="lang" role="group"></div>
-
-  <div id="start" role="dialog" aria-modal="true" aria-labelledby="start-title" hidden>
-    <div class="panel">
-      <h2 id="start-title" data-t="chooseTitle"></h2>
+      <h2 id="start-title"></h2>
       <div class="cards"></div>
-      <p class="note" data-t="chooseNote"></p>
-      <button type="button" class="cancel" data-t="cancel"></button>
+      <p class="note"></p>
     </div>
   </div>
-
+  <div id="game-over" role="dialog" aria-modal="true" hidden>
+    <div class="panel">
+      <h1></h1>
+      <p class="text"></p>
+      <p class="stats"></p>
+      <button type="button" onclick="location.reload()"></button>
+    </div>
+  </div>
+  <div id="prompt" hidden></div>
   <div id="stick" hidden><div class="knob"></div></div>
-  <button id="time-button" class="touch-button" type="button" data-t-title="timeButton">⏩</button>
-  <div id="hud">loading…</div>
-  <script type="module" src="js/main.js"></script>
+  <button id="give-button" class="touch-button" type="button" hidden>🥚</button>
+  <button id="time-button" class="touch-button" type="button">⏩</button>
+  <div id="hud">loading terrain…</div>
+  <script type="module" src="/static/js/main.js"></script>
 </body>
 </html>

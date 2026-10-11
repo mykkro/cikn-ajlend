@@ -1,7 +1,7 @@
 // Gentle sea waves: the same sum of sines in JavaScript (for floating objects)
 // and GLSL (for the water surface), so what floats matches what you see.
 
-export const SEA_LEVEL = 0; // mirrors SEA_LEVEL in world/heightmap.js
+export const SEA_LEVEL = 0; // mirrors SEA_LEVEL in terrain.py
 
 // [direction x, direction z, spatial frequency, speed, amplitude]
 const WAVES = [

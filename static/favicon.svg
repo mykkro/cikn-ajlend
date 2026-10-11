@@ -7,17 +7,16 @@
     </linearGradient>
   </defs>
   <circle cx="64" cy="70" r="58" fill="#fffaf0"/>
-  <g clip-path="url(#badge)" stroke="#3b2a1a" stroke-linejoin="round">
-    <rect x="0" y="0" width="140" height="140" fill="url(#sky)" stroke="none"/>
-    <rect x="0" y="96" width="140" height="40" fill="#3aa0c8" stroke="none"/>
-    <ellipse cx="64" cy="96" rx="48" ry="9" fill="#f3dca0" stroke="none"/>
-    <path d="M22 96 Q40 70 64 72 Q90 68 106 96 Z" fill="#6cc04a" stroke="none"/>
-    <rect x="55" y="70" width="26" height="18" fill="#fff4dc" stroke-width="3"/>
-    <path d="M53 71 L68 60 L83 71 Z" fill="#c8553d" stroke-width="3"/>
-    <rect x="44" y="52" width="12" height="36" fill="#fff4dc" stroke-width="3"/>
-    <path d="M42 53 L50 28 L58 53 Z" fill="#c8553d" stroke-width="3"/>
-    <rect x="84" y="78" width="14" height="11" fill="#ffe2a8" stroke-width="3"/>
-    <path d="M82 79 L91 70 L100 79 Z" fill="#e5383b" stroke-width="3"/>
+  <g clip-path="url(#badge)">
+    <rect x="0" y="0" width="140" height="140" fill="url(#sky)"/>
+    <rect x="0" y="94" width="140" height="40" fill="#3aa0c8"/>
+    <ellipse cx="64" cy="94" rx="46" ry="9" fill="#f3dca0"/>
+    <path d="M26 94 Q42 64 66 68 Q90 64 104 94 Z" fill="#6cc04a"/>
+    <ellipse cx="68" cy="72" rx="17" ry="13" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+    <circle cx="81" cy="57" r="9.5" fill="#fff" stroke="#3b2a1a" stroke-width="2.5"/>
+    <path d="M76 49 q0 -7 5 -4 q2 -6 6 -1 q5 -2 3 5 z" fill="#e5383b" stroke="#3b2a1a" stroke-width="2"/>
+    <path d="M89.5 55 l8 2.5 l-8 3 z" fill="#f7a72b" stroke="#3b2a1a" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="83" cy="55" r="2" fill="#3b2a1a"/>
   </g>
   <circle cx="64" cy="70" r="56" fill="none" stroke="#3b2a1a" stroke-width="4"/>
 </svg>
